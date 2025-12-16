@@ -9,7 +9,7 @@ import { Contact } from './components/Contact';
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 text-base">
       <Navbar />
       <main>
         <Hero />
