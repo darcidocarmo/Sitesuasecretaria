@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +9,7 @@ export const Contact: React.FC = () => {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -17,13 +18,40 @@ export const Contact: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
-    console.log('Form Submitted', formData);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    setFormData({ name: '', email: '', phone: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/suasecretariavirtual@outlook.com", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          _subject: `Novo Contato Site: ${formData.name}`,
+          _template: 'table', // Formats the email nicely
+          _captcha: 'false'   // Disables captcha to keep it simple (optional)
+        })
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        alert("Ocorreu um erro ao enviar. Por favor, tente novamente ou entre em contato pelo WhatsApp.");
+      }
+    } catch (error) {
+      console.error("Erro no envio:", error);
+      alert("Erro de conexão. Verifique sua internet e tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,12 +74,18 @@ export const Contact: React.FC = () => {
 
             <div className="md:col-span-3 p-10">
               {submitted ? (
-                <div className="h-full flex flex-col items-center justify-center text-center">
+                <div className="h-full flex flex-col items-center justify-center text-center animate-fadeIn">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                     <Send className="text-green-600" size={32} />
                   </div>
                   <h3 className="text-xl font-bold text-navy-900">Mensagem Enviada!</h3>
-                  <p className="text-gray-600">Em breve entraremos em contato.</p>
+                  <p className="text-gray-600 mb-6">Recebemos seu contato e retornaremos em breve.</p>
+                  <button 
+                    onClick={() => setSubmitted(false)}
+                    className="text-primary font-semibold hover:underline"
+                  >
+                    Enviar nova mensagem
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,11 +147,24 @@ export const Contact: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-primary hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className={`w-full bg-primary hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                   >
-                    Solicitar Proposta
-                    <Send size={18} />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        Solicitar Proposta
+                        <Send size={18} />
+                      </>
+                    )}
                   </button>
+                  
+                  {/* Honeypot field for simple spam protection (hidden) */}
+                  <input type="text" name="_honey" style={{display: 'none'}} />
                 </form>
               )}
             </div>
