@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, MessageCircle } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +9,6 @@ export const Contact: React.FC = () => {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -18,40 +17,25 @@ export const Contact: React.FC = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    try {
-      const response = await fetch("https://formsubmit.co/ajax/suasecretariavirtual@outlook.com", {
-        method: "POST",
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-          _subject: `Novo Contato Site: ${formData.name}`,
-          _template: 'table', // Formats the email nicely
-          _captcha: 'false'   // Disables captcha to keep it simple (optional)
-        })
-      });
+    // Texto formatado para o WhatsApp
+    const messageText = `Olá! Gostaria de solicitar uma proposta personalizada para secretariado remoto.%0A%0A` +
+      `*Nome:* ${formData.name}%0A` +
+      `*E-mail:* ${formData.email}%0A` +
+      `*Telefone:* ${formData.phone}%0A` +
+      `*Mensagem:* ${formData.message}`;
 
-      if (response.ok) {
-        setSubmitted(true);
-        setFormData({ name: '', email: '', phone: '', message: '' });
-      } else {
-        alert("Ocorreu um erro ao enviar. Por favor, tente novamente ou entre em contato pelo WhatsApp.");
-      }
-    } catch (error) {
-      console.error("Erro no envio:", error);
-      alert("Erro de conexão. Verifique sua internet e tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    const whatsappNumber = "5521980819854";
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${messageText}`;
+
+    // Abre o WhatsApp em uma nova aba
+    window.open(whatsappUrl, '_blank');
+
+    // Mostra estado de sucesso e limpa o form
+    setSubmitted(true);
+    setFormData({ name: '', email: '', phone: '', message: '' });
   };
 
   return (
@@ -64,11 +48,11 @@ export const Contact: React.FC = () => {
               <div>
                 <h3 className="text-2xl font-bold mb-4">Vamos Conversar?</h3>
                 <p className="text-gray-300 text-sm mb-6">
-                  Preencha o formulário e receba uma proposta personalizada para a sua necessidade em até 24 horas.
+                  Ao clicar no botão, sua mensagem será preparada e você será redirecionado para o nosso WhatsApp para finalizar o atendimento.
                 </p>
               </div>
               <div className="space-y-4 text-sm text-gray-300">
-                <p><strong>Dica:</strong> Detalhe qual a sua maior dificuldade hoje (ex: agenda, financeiro) para sermos mais assertivos.</p>
+                <p><strong>Foco em Agilidade:</strong> Respondemos em tempo real durante o horário comercial.</p>
               </div>
             </div>
 
@@ -76,15 +60,15 @@ export const Contact: React.FC = () => {
               {submitted ? (
                 <div className="h-full flex flex-col items-center justify-center text-center animate-fadeIn">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                    <Send className="text-green-600" size={32} />
+                    <MessageCircle className="text-green-600" size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-navy-900">Mensagem Enviada!</h3>
-                  <p className="text-gray-600 mb-6">Recebemos seu contato e retornaremos em breve.</p>
+                  <h3 className="text-xl font-bold text-navy-900">Redirecionando...</h3>
+                  <p className="text-gray-600 mb-6">Sua conversa foi iniciada. Se a aba não abriu automaticamente, verifique seu bloqueador de pop-ups.</p>
                   <button 
                     onClick={() => setSubmitted(false)}
-                    className="text-primary font-semibold hover:underline"
+                    className="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-sky-600 transition-colors"
                   >
-                    Enviar nova mensagem
+                    Novo Formulário
                   </button>
                 </div>
               ) : (
@@ -99,7 +83,7 @@ export const Contact: React.FC = () => {
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                      placeholder="Seu nome"
+                      placeholder="Como deseja ser chamado?"
                     />
                   </div>
 
@@ -118,7 +102,7 @@ export const Contact: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Telefone / WhatsApp</label>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
                       <input
                         type="tel"
                         name="phone"
@@ -133,7 +117,7 @@ export const Contact: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Como podemos te ajudar?</label>
                     <textarea
                       name="message"
                       id="message"
@@ -141,30 +125,17 @@ export const Contact: React.FC = () => {
                       value={formData.message}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                      placeholder="Gostaria de saber mais sobre..."
+                      placeholder="Descreva brevemente sua necessidade (ex: Gestão de agenda para consultório médico)"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full bg-primary hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition-colors shadow-lg flex items-center justify-center gap-3 text-lg"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 size={20} className="animate-spin" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        Solicitar Proposta
-                        <Send size={18} />
-                      </>
-                    )}
+                    <MessageCircle size={22} />
+                    Iniciar Conversa no WhatsApp
                   </button>
-                  
-                  {/* Honeypot field for simple spam protection (hidden) */}
-                  <input type="text" name="_honey" style={{display: 'none'}} />
                 </form>
               )}
             </div>

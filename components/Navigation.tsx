@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Instagram, Phone, Mail, MessageCircle } from 'lucide-react';
+import { Menu, X, Instagram, Phone, MessageCircle } from 'lucide-react';
 import { NavItem } from '../types';
 
 const navItems: NavItem[] = [
@@ -70,7 +70,7 @@ export const Navbar: React.FC = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-md ${scrolled ? 'text-navy-900' : 'text-white md:text-white text-navy-900'}`}
+              className={`p-2 rounded-md ${scrolled ? 'text-navy-900' : 'text-white'}`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -111,12 +111,16 @@ export const Footer: React.FC = () => {
             </p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contato Rápido</h3>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li className="flex items-center gap-2"><Mail size={16} /> suasecretariavirtual@outlook.com</li>
-              <li className="flex items-center gap-2"><Phone size={16} /> (21) 98081-9854</li>
-              <li className="flex items-center gap-2 text-primary">
-                <Instagram size={16} /> 
+            <h3 className="text-lg font-semibold mb-4">Contato Direto</h3>
+            <ul className="space-y-3 text-gray-400 text-sm">
+              <li className="flex items-center gap-2 text-white font-medium">
+                <MessageCircle size={18} className="text-green-500" /> 
+                <a href="https://wa.me/5521980819854" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  (21) 98081-9854 (WhatsApp)
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Instagram size={18} className="text-primary" /> 
                 <a href="https://www.instagram.com/suasecretaria_virtual/" target="_blank" rel="noopener noreferrer" className="hover:underline">
                   @suasecretaria_virtual
                 </a>
@@ -126,7 +130,8 @@ export const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Horário de Atendimento</h3>
             <p className="text-gray-400 text-sm">
-              Segunda a Sexta: 09:00 - 18:00
+              Segunda a Sexta: 09:00 - 18:00<br/>
+              Atendimento Remoto em todo Brasil.
             </p>
           </div>
         </div>
