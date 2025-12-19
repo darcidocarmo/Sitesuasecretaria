@@ -61,7 +61,7 @@ export const About: React.FC = () => {
 
             <ul className="space-y-4 mb-10">
               {[
-                "Especialista em Atendimento Médico e Jurídico",
+                "Especialista em Atendimento para profissionais liberais",
                 "Conformidade total com a LGPD e Privacidade"
                             ].map((item, index) => (
                 <li key={index} className="flex items-center gap-4 text-navy-900 font-bold">
